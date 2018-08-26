@@ -19,6 +19,11 @@ server.use(cors({ origin: "http://localhost:3000"}));
 server.use(compression());
 server.use(helmet());
 
+server.get("/", (Request, Response) => {
+    Response.send("on the master branch");
+
+})
+
 // selection of the full table jokes by desc order.
 server.get("/get/jokes", (Request, Response) =>{
     connection.query("select * from joke order by id desc", (Error,results) =>{
