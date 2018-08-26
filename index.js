@@ -1,5 +1,7 @@
 const express = require("express");
 const cors = require("cors");
+const compression = require("compression")
+const helmet = require("helmet")
 const bodyParser = require("body-parser");
 const {connection} = require("./Connection");
 const fs = require("fs");
@@ -14,6 +16,8 @@ server.listen(port, () => {
 server.use(express.static("public"));
 server.use(bodyParser.json());
 server.use(cors({ origin: "http://localhost:3000"}));
+server.use(compression());
+server.use(helmet());
 
 // selection of the full table jokes by desc order.
 server.get("/get/jokes", (Request, Response) =>{
