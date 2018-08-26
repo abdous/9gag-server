@@ -4,7 +4,7 @@ const databaseConfiguration = {
 
     host: "sql7.freemysqlhosting.net", // or server
     user: "sql7253327",
-    password: "siuhUBG93p",
+    password: "process.env.password",
     database: "sql7253327"
     }
 const connection  = mysql.createConnection(databaseConfiguration);
