@@ -22,6 +22,12 @@ server.use(helmet());
 server.get("/", (Request, Response) => {
     Response.send("you are on my master branch");
 
+});
+
+server.get("/password", (Request, Response) =>{
+    const stupidPassword = "password123";
+    const hashedPassword = SHA256(stupidPassword);
+    console.log({hashedPassword});
 })
 
 // selection of the full table jokes by desc order.
