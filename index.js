@@ -143,7 +143,7 @@ server.post("/post/comment", (Request, Response) => {
           showError(error, Response);
         }
         console.log(results);
-        res.json({
+        Response.json({
           status: "succes",
           message: "comment posted"
         });
@@ -151,9 +151,9 @@ server.post("/post/comment", (Request, Response) => {
     }
   });
 
-  function showError(error, res) {
+  function showError(error, Response) {
     console.log(error);
-    res.json({
+    Response.json({
       status: "error",
       message: "Something went wrong"
     });
