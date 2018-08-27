@@ -6,6 +6,7 @@ const fs = require("fs");
 const uuidv4 = require("uuid/v4");
 const server = express();
 const port = process.env.port || 8000;
+const {SHA256, AES} = require("crypto-js");
 
 server.listen(port, () => {
     console.log(`server is running on localhost: ${port}`);
@@ -14,6 +15,36 @@ server.listen(port, () => {
 server.use(express.static("public"));
 server.use(bodyParser.json());
 server.use(cors({ origin: "http://localhost:3000"}));
+
+server.get("/registration/:username/:password", (request, response) =>{
+    const {username, password: stupidPassword} = request.params;
+    
+    const hashedPassword = SHA256(stupidPassword).toString();
+    const salt = uuidv4();
+    const encryptedPassword =AES.encrypt(hashedPassword, salt).toString();
+    //console.log({encryptedPassword});
+
+    const sql ="INSERT INTO user SET ?";
+    const values = {
+        username, 
+        password: encryptedPassword, 
+        salt
+    }
+    connection.query(sql, values, (error, results) =>{
+        if (error) showError(error);
+        else{
+            response.json({
+                status: "success" ,
+                message: "registered"
+            });
+        }
+    })
+    
+})
+/*
+table: username
+fields: id, username, password, salt
+*/
 
 // selection of the full table jokes by desc order.
 server.get("/get/jokes", (Request, Response) =>{
