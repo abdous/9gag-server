@@ -5,7 +5,7 @@ const {connection} = require("./Connection");
 const fs = require("fs");
 const uuidv4 = require("uuid/v4");
 const server = express();
-const port = process.env.port || 8000;
+const port = process.env.PORT || 8000;
 const {SHA256, AES} = require("crypto-js");
 
 server.listen(port, () => {
