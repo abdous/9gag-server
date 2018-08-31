@@ -6,7 +6,7 @@ const fs = require("fs");
 const uuidv4 = require("uuid/v4");
 const server = express();
 const port = process.env.PORT || 8000;
-const {SHA256, AES} = require("crypto-js");
+const {SHA256, AES, enc} = require("crypto-js");
 
 server.listen(port, () => {
     console.log(`server is running on localhost: ${port}`);
@@ -14,15 +14,25 @@ server.listen(port, () => {
 
 server.use(express.static("public"));
 server.use(bodyParser.json());
-server.use(cors({ origin: "http://localhost:3000"}));
+server.use(cors({ origin: "http://localhost:3306"}));
 
+// the first example of how to generate an encrip
+server.get("/password", (request, response) =>{
+        const stupidPassword = "password123"
+        const hashedPassword=SHA256(stupidPassword).toString();
+        console.log({hashedPassword});
+        response.json(hashedPassword);
+});
+
+// registration of user with username and password
 server.get("/registration/:username/:password", (request, response) =>{
     const {username, password: stupidPassword} = request.params;
-    
     const hashedPassword = SHA256(stupidPassword).toString();
     const salt = uuidv4();
     const encryptedPassword =AES.encrypt(hashedPassword, salt).toString();
-    //console.log({encryptedPassword});
+    console.log({encryptedPassword});
+    //response.json(encryptedPassword);
+    //response.send({encryptedPassword})
 
     const sql ="INSERT INTO user SET ?";
     const values = {
@@ -31,20 +41,50 @@ server.get("/registration/:username/:password", (request, response) =>{
         salt
     }
     connection.query(sql, values, (error, results) =>{
-        if (error) showError(error);
-        else{
+        if (error) {
+            console.log(error);
+        } else
+        {
             response.json({
-                status: "success" ,
-                message: "registered"
-            });
-        }
-    })
+            status: "success" ,
+                 message: "registered"
+             });
+         }
+     })
     
 })
 /*
-table: username
+table: user
 fields: id, username, password, salt
 */
+
+
+server.get("/login/:username/:password", (req,res) =>{
+    const {username, password} = req.params;
+    const hashedPassword = SHA256(req.params.password).toString();
+        
+    const sql ="SELECT * FROM user WHERE username = ?, password=?";
+    const values = {
+        username, 
+        password
+    }
+    
+    connection.query(sql, values, (error, results) =>{
+    if (hashedPassword == hashedPassword) {
+        res.json({
+            "code":200,
+            "success":"login sucessfull"
+      });
+    }else{
+        
+      res.send({
+        "code":400,
+        "failed":"error ocurred"
+
+    })
+  }
+});
+})
 
 // selection of the full table jokes by desc order.
 server.get("/get/jokes", (Request, Response) =>{
@@ -156,5 +196,5 @@ server.post("/post/comment", (Request, Response) => {
     Response.json({
       status: "error",
       message: "Something went wrong"
-    });
-  }
+    })
+}

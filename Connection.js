@@ -3,9 +3,9 @@ const mysql = require("mysql");
 const databaseConfiguration = {
 
     host: "sql7.freemysqlhosting.net", // or server
-    user: "sql7253327",
-    password: "siuhUBG93p",
-    database: "sql7253327"
+    user: "sql7254337",
+    password: "Cp7kRtwNQ7",
+    database: "sql7254337"
     }
 const connection  = mysql.createConnection(databaseConfiguration);
 connection.connect(function(err) {
